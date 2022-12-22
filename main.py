@@ -283,7 +283,3 @@ for i in range(0,5):
 df13 = pd.DataFrame(list(zip(ip, city, region, country)),columns =["ip", "city", "region", "country"])
 
 print(df13)
-    
-    
-
- 
