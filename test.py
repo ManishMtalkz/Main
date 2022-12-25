@@ -25,6 +25,47 @@ for i in provider:
     ans[valuep] = valuef
     
 print("This is ans dict = ",ans)
+@app.route("/showdata",methods=['GET','POST'])
+def showdata():
+    try:
+        if(request.method == 'POST'):
+        
+            res = dataset()
+            provider = {}
+            freq = {}
+            provider = res['Provider']
+            freq = res['Frequency']
+            ans = {}
+            
+            for i in provider:
+               
+                valuep = provider[i]
+                valuef = freq[i]
+                
+               
+                ans[valuep] = valuef
+                
+            print("This is ans dict = ",ans)
+            return jsonify({"status":ans}) ,200
+        elif request.method == 'GET':
+            args = request.args
+            args = args.to_dict()
+            deliverRate = None
+            if 'deliverRate' in args:
+                
+                deliverRate = args['deliverRate']
+                res = dataset(True)
+                deliverRate = res
+            return jsonify({"deliveryRate":deliverRate})
+                
+                
+        else:
+            return jsonify({"status":"Invalid request"}), 400
+        
+    except Exception as e:
+        print(e)
+        return jsonify({"error":e})
+    
     
     
 
