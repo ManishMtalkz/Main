@@ -1,8 +1,10 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 import ast
 from datetime import datetime
 from flask import Flask, jsonify
+from flask import Flask, render_template
 from flask import*
 
 app = Flask(__name__)
@@ -111,9 +113,9 @@ def dataset():
     return d,pro,sta
 d,pro,sta = dataset()
 
-@app.route('/dataset_insights', methods=['GET'])
+@app.route('/diff_rates', methods=['GET'])
 def insights():
-    return jsonify({"dataset_insights of APP1":d})
+    return jsonify({"diffrent rates in APP1":d})
 
 @app.route('/provider_freq',methods =['GET'])
 def provider_freq():
@@ -123,7 +125,8 @@ def provider_freq():
 def status():
     return jsonify({"status of messages in APP1":sta})
 
-  
+
+
   
 if __name__ == '__main__':
     app.run(debug = True)
