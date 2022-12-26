@@ -38,7 +38,7 @@ def create_figure():
     STATUS = ['Delivered', ' No', 'Failed']
     data = [6667,1667,1666]
     # Creating plot
-    fig = plt.figure(figsize =(10, 7))
+    fig = plt.figure(figsize =(10, 5))
     plt.pie(data, labels = STATUS)
     
     

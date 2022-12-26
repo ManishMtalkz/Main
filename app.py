@@ -27,6 +27,7 @@ def dataset():
     # filling the null values using fillna function.
     df2 = df1.fillna(value={'Provider':'unknown' , 'Click Count':0 , 'Click Status':'NA' , 'Click DateTime':'NA' , 'Browser':'NA' , 'Platform':'not define' , 'IP Address':'not define' ,'Status':'No'})
     print("\n")
+    
     #After fill the null value check the null value in dataset.
     # convert send time and Delivered time into datetime datatype
     df2["Send Time"] =  pd.to_datetime(df2["Send Time"], infer_datetime_format=True)
@@ -111,6 +112,7 @@ def dataset():
    
     
     return d,pro,sta
+
 d,pro,sta = dataset()
 
 @app.route('/diff_rates', methods=['GET'])
