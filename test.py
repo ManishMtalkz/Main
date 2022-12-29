@@ -69,3 +69,20 @@ def showdata():
     
     
 
+
+
+ @app.route('/alldata',methods=['GET','POST'])
+# def alldata():
+#     try:
+#         if request.method == 'GET':
+#             r = dataset()
+#             print(res)
+#             return jsonify({"Analyse data":res})
+#         else:
+#             return jsonify({"status":False,"message":"Invalid request"})
+            
+#         pass
+    
+#     except Exception as e:
+#         print(e)
+#         return jsonify({'status':False})

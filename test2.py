@@ -3,15 +3,17 @@ import numpy as np
 from datetime import datetime
 from flask import Flask, jsonify
 from flask import*
-analysis = Blueprint("analysis", __name__, static_folder="static", template_folder="templates")
+# analysis = Blueprint("analysis", __name__, static_folder="static", template_folder="templates")
 
-@analysis.route('/')
+app = Flask(__name__)
+
+@app.route('/')
 def hello_world():
    return jsonify({"status":"welcome to anlysis part"})
 # read dataset
 # def dataset(deli,undeli,resp,nreac):
 def dataset(ansString):
-    df1 = pd.read_csv('demo_dataset.csv',low_memory=False)
+    df1 = pd.read_csv('dataset.csv',low_memory=False)
     # print("first five rows of the dataset\n\n",df1.head())
     # print("\n")
     # Drop the unwanted column.
@@ -110,7 +112,7 @@ def dataset(ansString):
 # nreac  = True
 # res = dataset(nreac)
 # print("nonreaction rate of APP1 => ",res)
-@analysis.route("/showdata",methods=['GET','POST'])
+@app.route("/showdata",methods=['GET','POST'])
 def showdata():
     try:
         if(request.method == 'POST'):
@@ -174,3 +176,8 @@ def showdata():
     except Exception as e:
         print(e)
         return jsonify({"error":e})
+    
+  
+if __name__ == '__main__':
+    app.run(debug = True)
+  
