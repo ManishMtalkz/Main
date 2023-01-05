@@ -1,0 +1,56 @@
+_id,chatbot_id,createdAt,event,properties.chatbot_id,properties.flowchart,properties.flowchart_name,properties.instance_id,properties.message,properties.message.data.bodyText,properties.message.data.buttonText,properties.message.data.buttonsList.button_id_1,properties.message.data.buttonsList.button_id_2,properties.message.data.buttonsList.button_id_3,properties.message.data.options,properties.message.data.options.header.mediaUrl,properties.message.data.options.header.type,properties.message.data.sections.GET,properties.message.data.sections.POST,properties.message.data.text.message,properties.message.data.text.preview_url,properties.message.type,properties.message_text,properties.properties.body.params,properties.properties.body.urlEncoded,properties.properties.headers,properties.properties.method,properties.properties.outputMapping,properties.properties.url,properties.uniq_id,uniq_id
+63a44c2899fbd802a6c748b9,63a294b7e20457eac7473f25,1671711784792,new_message,63a294b7e20457eac7473f25,,,,,,,,,,,,,,,,,,Hi,,,,,,,589592,589592
+63a44c2899fbd802a6c748bb,63a294b7e20457eac7473f25,1671711784794,session_start,,,,,,,,,,,,,,,,,,,,,,,,,,,589592
+63a44c2899fbd802a6c748bc,63a294b7e20457eac7473f25,1671711784795,sending_message,63a294b7e20457eac7473f25,null,,,Start,,,,,,,,,,,,,,,,,,,,,589592,589592
+63a44c2899fbd802a6c748c3,63a294b7e20457eac7473f25,1671711784835,message_response,63a294b7e20457eac7473f25,null,,,,,,,,,,,,,,,,,,,,,,,,589592,589592
+63a44c4699fbd802a6c748c8,63a294b7e20457eac7473f25,1671711814681,new_message,63a294b7e20457eac7473f25,,,,,,,,,,,,,,,,,,Hi,,,,,,,589592,589592
+63a44c4699fbd802a6c748cc,63a294b7e20457eac7473f25,1671711814686,sending_message,63a294b7e20457eac7473f25,null,,,"Sorry, I am still learning.",,,,,,,,,,,,,,,,,,,,,589592,589592
+63a44c4699fbd802a6c748d0,63a294b7e20457eac7473f25,1671711814691,message_response,63a294b7e20457eac7473f25,null,,,,,,,,,,,,,,,,,,,,,,,,589592,589592
+63a44c5999fbd802a6c748d2,63a294b7e20457eac7473f25,1671711833849,new_message,63a294b7e20457eac7473f25,,,,,,,,,,,,,,,,,,Bye,,,,,,,589592,589592
+63a44c5999fbd802a6c748d6,63a294b7e20457eac7473f25,1671711833855,sending_message,63a294b7e20457eac7473f25,null,,,Thank you for your time.,,,,,,,,,,,,,,,,,,,,,589592,589592
+63a44c5999fbd802a6c748da,63a294b7e20457eac7473f25,1671711833862,message_response,63a294b7e20457eac7473f25,null,,,,,,,,,,,,,,,,,,,,,,,,589592,589592
+63a44c6199fbd802a6c748df,63a294b7e20457eac7473f25,1671711841751,new_message,63a294b7e20457eac7473f25,,,,,,,,,,,,,,,,,,Hi,,,,,,,589592,589592
+63a44c6199fbd802a6c748e1,63a294b7e20457eac7473f25,1671711841752,session_start,,,,,,,,,,,,,,,,,,,,,,,,,,,589592
+63a44c6199fbd802a6c748f5,63a294b7e20457eac7473f25,1671711841797,sending_message,63a294b7e20457eac7473f25,StartPoint,,,,"Hi there,
+Welcome to *Vahak*",,Specific service,Talk to our agent,Exit,,https://i0.wp.com/blog-wp.vahak.in/wp-content/uploads/2021/07/Vahak-The-Indian-Truck-Drivers-Choice-for-Booking-Loads.png?w=642&ssl=1,image,,,,,reply,,,,,,,,589592,589592
+63a44c6199fbd802a6c748f9,63a294b7e20457eac7473f25,1671711841803,message_response,63a294b7e20457eac7473f25,StartPoint,,,,,,,,,,,,,,,,,,,,,,,,589592,589592
+63a44c9399fbd802a6c748fb,63a294b7e20457eac7473f25,1671711891755,sending_message,63a294b7e20457eac7473f25,null,,,I am tapping out.,,,,,,,,,,,,,,,,,,,,,589592,589592
+63a44c9399fbd802a6c748ff,63a294b7e20457eac7473f25,1671711891760,message_response,63a294b7e20457eac7473f25,null,,,,,,,,,,,,,,,,,,,,,,,,589592,589592
+63a44cf899fbd802a6c74906,63a294b7e20457eac7473f25,1671711992069,session_start,,,,,,,,,,,,,,,,,,,,,,,,,,,589592
+63a44cf899fbd802a6c74904,63a294b7e20457eac7473f25,1671711992066,new_message,63a294b7e20457eac7473f25,,,,,,,,,,,,,,,,,,Hi,,,,,,,589592,589592
+63a44cf899fbd802a6c7491a,63a294b7e20457eac7473f25,1671711992099,sending_message,63a294b7e20457eac7473f25,StartPoint,,,,"Hi there,
+Welcome to *Vahak*",,Specific service,Talk to our agent,Exit,,https://i0.wp.com/blog-wp.vahak.in/wp-content/uploads/2021/07/Vahak-The-Indian-Truck-Drivers-Choice-for-Booking-Loads.png?w=642&ssl=1,image,,,,,reply,,,,,,,,589592,589592
+63a44cf899fbd802a6c7491e,63a294b7e20457eac7473f25,1671711992104,message_response,63a294b7e20457eac7473f25,StartPoint,,,,,,,,,,,,,,,,,,,,,,,,589592,589592
+63a44d0299fbd802a6c74920,63a294b7e20457eac7473f25,1671712002774,new_message,63a294b7e20457eac7473f25,,,,,,,,,,,,,,,,,,Specific service,,,,,,,589592,589592
+63a44d0299fbd802a6c74924,63a294b7e20457eac7473f25,1671712002782,sending_message,63a294b7e20457eac7473f25,StartPoint,,,,This is some body text,Service selection,,,,[],,,"[{""id"":""opt_1A"",""title"":""Company details"",""description"":""ABCD""}]","[{""id"":""opt_2A"",""title"":""Post a load"",""description"":""QWERT""},{""id"":""opt_2B"",""title"":""Is driver reached?"",""description"":""WXYZ""}]",,,list,,,,,,,,589592,589592
+63a44d0299fbd802a6c74928,63a294b7e20457eac7473f25,1671712002789,message_response,63a294b7e20457eac7473f25,StartPoint,,,,,,,,,,,,,,,,,,,,,,,,589592,589592
+63a44d0c99fbd802a6c7492a,63a294b7e20457eac7473f25,1671712012560,new_message,63a294b7e20457eac7473f25,,,,,,,,,,,,,,,,,,Is driver reached?,,,,,,,589592,589592
+63a44d0d99fbd802a6c7492e,63a294b7e20457eac7473f25,1671712013571,session_end,,,,,,,,,,,,,,,,,,,,,,,,,,,589592
+63a44d5799fbd802a6c74935,63a294b7e20457eac7473f25,1671712087558,session_start,,,,,,,,,,,,,,,,,,,,,,,,,,,589592
+63a44d5799fbd802a6c74933,63a294b7e20457eac7473f25,1671712087557,new_message,63a294b7e20457eac7473f25,,,,,,,,,,,,,,,,,,Is driver reached?,,,,,,,589592,589592
+63a44d5799fbd802a6c74949,63a294b7e20457eac7473f25,1671712087584,sending_message,63a294b7e20457eac7473f25,StartPoint,,,,"Hi there,
+Welcome to *Vahak*",,Specific service,Talk to our agent,Exit,,https://i0.wp.com/blog-wp.vahak.in/wp-content/uploads/2021/07/Vahak-The-Indian-Truck-Drivers-Choice-for-Booking-Loads.png?w=642&ssl=1,image,,,,,reply,,,,,,,,589592,589592
+63a44d5799fbd802a6c7494d,63a294b7e20457eac7473f25,1671712087588,message_response,63a294b7e20457eac7473f25,StartPoint,,,,,,,,,,,,,,,,,,,,,,,,589592,589592
+63a44d5c99fbd802a6c7494f,63a294b7e20457eac7473f25,1671712092684,new_message,63a294b7e20457eac7473f25,,,,,,,,,,,,,,,,,,Talk to our agent,,,,,,,589592,589592
+63a44d5d99fbd802a6c74953,63a294b7e20457eac7473f25,1671712093694,session_end,,,,,,,,,,,,,,,,,,,,,,,,,,,589592
+63a44e2d99fbd802a6c74958,63a294b7e20457eac7473f25,1671712301526,new_message,63a294b7e20457eac7473f25,,,,,,,,,,,,,,,,,,Hi,,,,,,,589592,589592
+63a44e2d99fbd802a6c7495a,63a294b7e20457eac7473f25,1671712301527,session_start,,,,,,,,,,,,,,,,,,,,,,,,,,,589592
+63a44e2d99fbd802a6c7496e,63a294b7e20457eac7473f25,1671712301552,sending_message,63a294b7e20457eac7473f25,StartPoint,,,,"Hi there,
+Welcome to *Vahak*",,Specific service,Talk to our agent,Exit,,https://i0.wp.com/blog-wp.vahak.in/wp-content/uploads/2021/07/Vahak-The-Indian-Truck-Drivers-Choice-for-Booking-Loads.png?w=642&ssl=1,image,,,,,reply,,,,,,,,589592,589592
+63a44e2d99fbd802a6c74972,63a294b7e20457eac7473f25,1671712301556,message_response,63a294b7e20457eac7473f25,StartPoint,,,,,,,,,,,,,,,,,,,,,,,,589592,589592
+63a44e5f99fbd802a6c74974,63a294b7e20457eac7473f25,1671712351528,sending_message,63a294b7e20457eac7473f25,null,,,I am tapping out.,,,,,,,,,,,,,,,,,,,,,589592,589592
+63a44e5f99fbd802a6c74978,63a294b7e20457eac7473f25,1671712351532,message_response,63a294b7e20457eac7473f25,null,,,,,,,,,,,,,,,,,,,,,,,,589592,589592
+63a44f1099fbd802a6c7497d,63a294b7e20457eac7473f25,1671712528284,new_message,63a294b7e20457eac7473f25,,,,,,,,,,,,,,,,,,Hi,,,,,,,589592,589592
+63a44f1099fbd802a6c7497f,63a294b7e20457eac7473f25,1671712528285,session_start,,,,,,,,,,,,,,,,,,,,,,,,,,,589592
+63a44f1099fbd802a6c74993,63a294b7e20457eac7473f25,1671712528313,sending_message,63a294b7e20457eac7473f25,StartPoint,,,,"Hi there,
+Welcome to *Vahak*",,Specific service,Talk to our agent,Exit,,https://i0.wp.com/blog-wp.vahak.in/wp-content/uploads/2021/07/Vahak-The-Indian-Truck-Drivers-Choice-for-Booking-Loads.png?w=642&ssl=1,image,,,,,reply,,,,,,,,589592,589592
+63a44f1099fbd802a6c74997,63a294b7e20457eac7473f25,1671712528319,message_response,63a294b7e20457eac7473f25,StartPoint,,,,,,,,,,,,,,,,,,,,,,,,589592,589592
+63a44f1699fbd802a6c74999,63a294b7e20457eac7473f25,1671712534969,new_message,63a294b7e20457eac7473f25,,,,,,,,,,,,,,,,,,Specific service,,,,,,,589592,589592
+63a44f1699fbd802a6c7499d,63a294b7e20457eac7473f25,1671712534978,sending_message,63a294b7e20457eac7473f25,StartPoint,,,,This is some body text,Service selection,,,,[],,,"[{""id"":""opt_1A"",""title"":""Company details"",""description"":""ABCD""}]","[{""id"":""opt_2A"",""title"":""Post a load"",""description"":""QWERT""},{""id"":""opt_2B"",""title"":""Is driver reached?"",""description"":""WXYZ""}]",,,list,,,,,,,,589592,589592
+63a44f1699fbd802a6c749a1,63a294b7e20457eac7473f25,1671712534982,message_response,63a294b7e20457eac7473f25,StartPoint,,,,,,,,,,,,,,,,,,,,,,,,589592,589592
+63a44f1e99fbd802a6c749a3,63a294b7e20457eac7473f25,1671712542084,new_message,63a294b7e20457eac7473f25,,,,,,,,,,,,,,,,,,Company details,,,,,,,589592,589592
+63a44f1e99fbd802a6c749a7,63a294b7e20457eac7473f25,1671712542089,api_call,,,StartPoint,63a294b7e20457eac7473f251671712528284,,,,,,,,,,,,,,,,[],true,"[{""key"":""Origin"",""value"":""http://localhost:3000""},{""key"":""Referer"",""value"":""http://localhost:3000/""}]",get,"[{""key"":""dataCD"",""value"":""<<data>>""},{""key"":""statusCD"",""value"":""<<http_status>>""}]",https://dev.vahak.in/v1/c/d?c_i=1740,589592,589592
+63a44f1f99fbd802a6c749a9,63a294b7e20457eac7473f25,1671712543728,sending_message,63a294b7e20457eac7473f25,StartPoint,,,,,,,,,,,,,,"Details are <<dataCD.name>>.
+Status is <<statusCD>>.",false,text,,,,,,,,589592,589592
+63a44f1f99fbd802a6c749ad,63a294b7e20457eac7473f25,1671712543733,message_response,63a294b7e20457eac7473f25,StartPoint,,,,,,,,,,,,,,,,,,,,,,,,589592,589592
+63a44f2099fbd802a6c749af,63a294b7e20457eac7473f25,1671712544738,session_end,,,,,,,,,,,,,,,,,,,,,,,,,,,589592
