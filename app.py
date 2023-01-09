@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import json
 import io
 import ast
 import requests
@@ -62,8 +63,7 @@ def dataset():
     # print(merge_dff.dtypes)
 
         
-    #return delivered rate of caimpaign     
-
+    #return delivered rate of caimpaign  
     total_sent = merge_dff['Message'].count()
     # print("total messages sent",total_sent)
     num_delivered = (merge_dff['Status'] == 'Delivered').sum()
@@ -71,42 +71,33 @@ def dataset():
     delivered_rate = (num_delivered / total_sent) * 100
     d['delivered_rate'] = delivered_rate
 
-
-    # undelivered rate-----------
-
-
-    total_sent = merge_dff['Status'].count()
-    num_undelivered = (merge_dff['Status'] == 'Failed').sum()
-    # print("number of undelivered msges\t",num_undelivered)
-    undelivered_rate = (num_undelivered / total_sent) * 100
-    d['undelivered_rate']=undelivered_rate
-
     #response rate-----------
-        
-
-    total_sent = merge_dff['Status'].count()
+    total_sent = int(merge_dff['Status'].count())
+    sent = json.dumps( total_sent)
     # print("total messages sent \n",total_sent)
-    clicked_msg = (merge_dff['Clicks'] > 0).sum()
+    clicked_msg = int((merge_dff['Clicks'] > 0).sum())
+    clicked = json.dumps(clicked_msg)
     # print("number of messages clicked\t",clicked_msg)
     response_rate = (clicked_msg  / total_sent)*100
     d['response_rate']=response_rate
+    # d['Total Sent'] = sent
+    print(type(response_rate))
+    print(type(clicked_msg))
+    # total_sent = int(df.col1.sum())
+    # data = json.dumps(sum_col)
+    # d
+    # d['Total click']= clicked_msg
+    # d['Total sent']=  total_sent 
     
-
-    #now calculating the non-reaction rate ---
-    total_sent = merge_dff['Status'].count()
-    # print("total messages sent\n\t",total_sent)
-    unclicked_msg = (merge_dff['Clicks'] == 0).sum()
-    # print("number of unclicked messages\t",unclicked_msg)
-    notresponse_rate = (unclicked_msg  / total_sent)*100
-    d['notresponse_rate']=notresponse_rate
-
-
 
     #  frequeancy of status of the messages
     df4 =  merge_dff.groupby('Status').size().sort_values(ascending=False).reset_index()
     df4.rename(columns =  {0:'No_of_msges'},inplace = True)
     j = df4.set_index('Status')['No_of_msges'].to_json()
     sta = ast.literal_eval(j)
+    sta['Total Sent'] = sent
+    sta['Clicked Messages'] =  clicked
+    
     df6 = merge_dff.groupby('Status').size().sort_values(ascending=False).reset_index()
     df6.rename(columns =  {0:'No_of_msges'},inplace = True)
     
@@ -119,6 +110,12 @@ def dataset():
     pro = ast.literal_eval(i)
     df7 =  merge_dff.groupby('Provider').size().sort_values(ascending=False).reset_index()
     df7.rename(columns =  {0:'Frequency'},inplace = True)
+    
+    # now calculating CTR--------------click through rate-------
+    ctr = (clicked_msg/num_delivered)*100
+    d['CTR']= ctr
+
+    
     
     #fetching the ip address column from the dataset anf find user's information------
     
@@ -145,7 +142,7 @@ def dataset():
     
     for i in range(0,5):
         response = get_location(IP_list[i])
-        print(response)
+        # print(response)
         ip.append(IP_list[i])
         city.append(response.get("city"))
         region.append(response.get("region"))
@@ -153,8 +150,20 @@ def dataset():
         
         
     df8 = pd.DataFrame(list(zip(ip, city, region, country)),columns =["ip", "city", "region","country"])
-    print(df8)
-   
+    
+        
+    combined_df = pd.concat([merge_dff, df8], axis=1, join='inner')
+    print(combined_df.head())
+    print(combined_df.columns)
+    combined_df.drop('IP Address', inplace=True, axis=1)  
+    # print(combined_df.columns) 
+
+    # print(df8)
+# function to find the coordinate
+# of a given city
+
+
+
 
     return d,pro,sta,df6,df7
     
@@ -183,8 +192,8 @@ def insights():
 def provider_freq():
     return jsonify({"provider in camp1 and their freq":pro})
 
-print(df6)
-print(df7)
+# print(df6)
+# print(df7)
 @app.route('/status',methods =['GET'])
 def status():
     return jsonify({"status of messages in APP1":sta})
