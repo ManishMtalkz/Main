@@ -50,13 +50,11 @@ merge_dff["Diffrence Secs"] = seconds
 total_sent = merge_dff['Message'].count()
 Delivered = (merge_dff['Status'] == 'Delivered').sum()
 delivered_rate = (Delivered / total_sent) * 100
-print(Delivered)
 
 # undelivered rate-----------
 total_sent = merge_dff['Status'].count()
 Failed = (merge_dff['Status'] == 'Failed').sum()
 undelivered_rate = (Failed / total_sent) * 100
-print(Failed)
 
 #response rate-----------
 total_sent = merge_dff['Status'].count()
@@ -104,7 +102,7 @@ def get_location(ip_address):
     return location_data
     
 
-for i in range(0,25):
+for i in range(0,5):
     response = get_location(IP_list[i])
     # print(response)
     ip.append(IP_list[i])
@@ -287,7 +285,7 @@ fig.update_layout(
    
 )
 
-fig.write_html('first_figure.html', auto_open=True)
+fig.write_html('index.html', auto_open=True)
 
 
 
