@@ -1,285 +1,298 @@
-#import the library for Data preprocessing-----
 import pandas as pd
 import numpy as np
 from datetime import datetime
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import pandas as pd
 import requests
-from matplotlib import pyplot as plt
+from datetime import datetime
+from geopy.exc import GeocoderTimedOut
+from geopy.geocoders import Nominatim
 
-# read dataset 
-df1 = pd.read_csv("https://mtalkzplatformstorage.blob.core.windows.net/mtalkz-files-transfer/ig138I5Ecgez1TL.csv",low_memory=False)
-print("first five rows of the dataset\n\n",df1.head())
-print("\n")
-# Drop the unwanted column.
-df1.drop(['Unnamed: 15','Unnamed: 16'], inplace = True,axis = 1)
-#syntax----------------------------------------------------------------------------------------df1.drop(['C', 'D'], axis=1)
-print("shape of the dataset",df1.shape)
-# checking the null values in the dataset.
-df1.isnull()
-print("\n")
-# total number of null values present in each column
-print("total number of null values present in each column\n\n",df1.isnull().sum())
-# filling the null values using fillna function.
-df2 = df1.fillna(value={'Provider':'unknown' , 'Click Count':0 , 'Click Status':'NA' , 'Click DateTime':'NA' , 'Browser':'NA' , 'Platform':'not define' , 'IP Address':'not define' ,'Status':'No'})
-print("\n")
-#After fill the null value check the null value in dataset.
-print("After fill the null value total null value in dataset",df2.isnull().sum().sum())
-print("\n")
-# convert send time and Delivered time into datetime datatype
-df2["Send Time"] =  pd.to_datetime(df2["Send Time"], infer_datetime_format=True)
-df2["Delivered Time"] =  pd.to_datetime(df2["Delivered Time"], infer_datetime_format=True)
-
-#find the difference between delivered time and send time,and convert in seconds.
-df2["Diffrence Time"] = df2["Delivered Time"] - df2["Send Time"]
-seconds = df2["Diffrence Time"].astype('timedelta64[s]').astype(np.int32)
-df2["Diffrence Secs"] = seconds
-print("data types of column present in the dataset\n\n",df2.dtypes)
-print("\n")
-print("rows and column of the dataset\t",df2.shape)
-#print("print the dataset which cointaining diffrence seconds column",df2.head())
-print("\n")
-# Here we grouped the the df2 
-df3 = df2.groupby("Campaign name")
-df3
-
-for x,y in df3:
-    print(x)
-    print(y.head())
-    print()
+  #-------------------- data preprocessing----------------------#
     
+df1 =pd.read_csv("https://mtalkzplatformstorage.blob.core.windows.net/mtalkz-files-transfer/ynX1KNPiiyFRLwS.csv")
+# df1.dtypes
+#dataset2
+df2 = pd.read_csv("https://mtalkzplatformstorage.blob.core.windows.net/mtalkz-files-transfer/Qxozys6Bpi66Cvt.csv")
+df2.dtypes
+df2.rename(columns = {'Campaign Name':'Campaign name'}, inplace = True)
+merge_dff = pd.merge(df1, df2, on ='Number',how='outer')
+merge_dff.head()
+#null value present in each column.-----
+merge_dff.isnull().sum()
+
+#-----------------Rename column-------------------
+merge_dff.rename(columns = {'Location_y':'Click Location','Location_x':'Provider Location','Campaign name_x':'Campaign name','Count':'Clicks'}, inplace = True)
+merge_dff.head()
+#remove extra column---------------
+
+
+
+# ---------------------dealing with null values-------------------
+merge_dff= merge_dff.fillna(value={'Provider Location':'unknown' , 'Provider':'unknown' , 'Browser':'unknown' , 'Platform':'unknown'   ,'Status':'No','Clicks':0,'Click Location':'unknown'})
+merge_dff.drop(['Campaign name_y'], inplace = True,axis = 1)
+merge_dff['Clicks'] = merge_dff['Clicks'].astype(int)
+merge_dff['Status'] = merge_dff['Status'].replace(['Delivery','Other'], ['Delivered','Failed'])
+
+#-----------------------calculate diffrence btwn sent-time and delivered time---------#
+# convert send time and Delivered time into datetime datatype----
+merge_dff["Send Time"] =  pd.to_datetime(merge_dff["Send Time"], infer_datetime_format=True)
+merge_dff["Delivered Time"] =  pd.to_datetime(merge_dff["Delivered Time"], infer_datetime_format=True)
+#Diffrence of send time and delivered time.-------
+merge_dff["Diffrence Time"] = merge_dff["Delivered Time"] - merge_dff["Send Time"]
+seconds = merge_dff["Diffrence Time"].astype('timedelta64[s]').astype(np.int32)
+merge_dff["Diffrence Secs"] = seconds
+
     
-#accessing individual caimpaign and find the delivered rate
-df4 = df3.get_group("APP1")
-# df4 dataframe contain records related to APP1 campaign
-print("number of rows and column of APP1 caimpaign",df4.shape)
-print("\n")
-total_sent = df4['Status'].count()
-print("total messages sent\t",total_sent)
-num_delivered = (df4['Status'] == 'Delivered').sum()
-print("\n")
-print("total messages delivered in APP1\t",num_delivered)
-delivered_rate = (num_delivered / total_sent) * 100
-print("\n")
-print("delivered rate of APP1\t",delivered_rate)
+#return delivered rate of caimpaign     
 
+total_sent = merge_dff['Message'].count()
+Delivered = (merge_dff['Status'] == 'Delivered').sum()
+delivered_rate = (Delivered / total_sent) * 100
+print(Delivered)
 
-#accessing  APP2 campaign and find the delivered rate
-df5 = df3.get_group("APP2")
-# print("shape of dataframe  APP1\t",df5.shape)
-print("\n")
-total_sent = df5['Status'].count()
-print("total messages sent",total_sent)
-print("\n")
-num_delivered = (df5['Status'] == 'Delivered').sum()
-print("total messages delivered in APP2\t",num_delivered)
-print("\n")
-delivered_rate = (num_delivered / total_sent) * 100
-print("delivered rate of APP2\t",delivered_rate)
-print("\n")
+# undelivered rate-----------
+total_sent = merge_dff['Status'].count()
+Failed = (merge_dff['Status'] == 'Failed').sum()
+undelivered_rate = (Failed / total_sent) * 100
+print(Failed)
 
+#response rate-----------
+total_sent = merge_dff['Status'].count()
+Clicked = (merge_dff['Clicks'] > 0).sum()
+response_rate = (Clicked / total_sent)*100
 
-# now finding the undelivered rate --------
-df6 = df3.get_group("APP1")
-#print(df6.shape)
-total_sent = df4['Status'].count()
-#print("total messages sent",total_sent)
-num_undelivered = (df4['Status'] == 'No').sum()
-print("number of undelivered msges\t",num_undelivered)
-print("\n")
-undelivered_rate = (num_undelivered / total_sent) * 100
-print("undelivered rate of APP1\t",undelivered_rate)
-print("\n")
+#now calculating the non-reaction rate ---
+total_sent = merge_dff['Status'].count()
+unclicked_msg = (merge_dff['Clicks'] == 0).sum()
+notresponse_rate = (unclicked_msg  / total_sent)*100
 
-# now calculating the response rate of APP1 --------
-df7 = df3.get_group("APP1")
-total_sent = df4['Click Status'].count()
-#print("total messages sent \n",total_sent)
-clicked_msg = (df4['Click Status'] == 'Yes').sum()
-print("number of messages clicked\t",clicked_msg)
-print("\n")
-response_rate = (clicked_msg  / total_sent)*100
-print("response rate of APP1\t",response_rate)
-print("\n")
+#  frequeancy of status of the messages
+df4 =  merge_dff.groupby('Status').size().sort_values(ascending=False).reset_index()
+df4.rename(columns =  {0:'No_of_msges'},inplace = True)
+j = df4.set_index('Status')['No_of_msges'].to_json()
+df6 = merge_dff.groupby('Status').size().sort_values(ascending=False).reset_index()
+df6.rename(columns =  {0:'No_of_msges'},inplace = True)
 
-#now calculating the failure rate of APP1---
-df8 = df3.get_group("APP1")
-total_sent = df4['Click Status'].count()
-print("total messages sent\t",total_sent)
-print("\n")
-options = ['No']
-# unclicked_msg = df4[(df4['Status'] == 'Delivered') & (df4['Click Status']=='No')].sum()
-df9 = df4[(df4['Status'] == 'Delivered') & (df4['Click Status'].isin(options))]
-unclicked_msg =df9['Status'].count()
-print("number of unclicked messages\t",unclicked_msg)
-nonreaction_rate = (unclicked_msg  / total_sent)*100
-print("nonreaction_rate  of APP1\t",nonreaction_rate)
-print("\n")
+#----Provider and its frequency-----------
+df5 =  merge_dff.groupby('Provider').size().sort_values(ascending=False).reset_index()
+df5.rename(columns =  {0:'Frequency'},inplace = True)
 
-# providers in APP1 and their frequency messages in APP1
-df9 = df4.groupby('Provider').size().sort_values(ascending=False).reset_index()
-df9.rename(columns =  {0:'Frequency'},inplace = True)
-print(df9.head())
+# df_top10 = df5.nlargest(10, "df5")
+top10_Provider = df5["Provider"].tolist()
+top10_freq = df5["Frequency"].tolist()
 
-
-# Bar chart shows the providers in APP1 and their frequency messages in APP1.
-name = df9['Provider'].head(12)
-count = df9['Frequency'].head(12)
-
-# Figure Size
-fig, ax = plt.subplots(figsize =(16, 9))
-
-# Horizontal Bar Plot
-ax.barh(name, count)
-
-# Remove axes splines
-for s in ['top', 'bottom', 'left', 'right']:
-    ax.spines[s].set_visible(False)
-
-# Remove x, y Ticks
-ax.xaxis.set_ticks_position('none')
-ax.yaxis.set_ticks_position('none')
-
-# Add padding between axes and labels
-ax.xaxis.set_tick_params(pad = 5)
-ax.yaxis.set_tick_params(pad = 10)
-
-# # Add x, y gridlines
-# ax.grid(b = True, color ='grey',
-# linestyle ='-.', linewidth = 0.5,
-# alpha = 0.2)
-
-# Show top values
-ax.invert_yaxis()
-
-# Add annotation to bars
-for i in ax.patches:
-    plt.text(i.get_width()+0.2, i.get_y()+0.5,
-    str(round((i.get_width()), 2)),
-    fontsize = 10, fontweight ='bold',
-    color ='grey')
-
-# Add Plot Title
-ax.set_title('providers in campaign 1 and their frequency messages in campaign1',loc ='left', )
-
-# Add Text watermark
-fig.text(0.9, 0.15, 'Jeeteshgavande30', fontsize = 12,
-color ='grey', ha ='right', va ='bottom',
-alpha = 0.7)
-
-# Show Plot
-print(plt.show())
-
-
-# find the frequeancy of status of the messages of APP1
-df11 =  df4.groupby('Status').size().sort_values(ascending=False).reset_index()
-df11.rename(columns =  {0:'No_of_msges'},inplace = True)
-print("status of  messages sent\n\n",df11)
-
-# pie chart between Delivered,No and Failed Messages.
-
-STATUS = ['Delivered', ' No', 'Failed']
- 
-data = [6667,1667,1666]
-explode = (0.1, 0.0, 0.2)
- 
-# Creating color parameters
-colors = ( "green", "blue", "red")
- 
-# Wedge properties
-wp = { 'linewidth' : 1, 'edgecolor' : "green" }
- 
-# Creating autocpt arguments
-def func(pct, allvalues):
-    absolute = int(pct / 100.*np.sum(allvalues))
-    return "{:.1f}%\n({:d} g)".format(pct, absolute)
- 
-# Creating plot
-fig, ax = plt.subplots(figsize =(10, 4))
-wedges, texts, autotexts = ax.pie(data,
-                                  autopct = lambda pct: func(pct, data),
-                                  explode = explode,
-                                  labels = STATUS,
-                                  shadow = True,
-                                  colors = colors,
-                                  startangle = 90,
-                                  wedgeprops = wp,
-                                  textprops = dict(color ="black"))
- 
- 
-plt.setp(autotexts, size = 8, weight ="bold")
-ax.set_title("pie chart shows status of messages in campaign 1")
- 
-# show plot
-print(plt.show())
-
-# total messages sent in APP1 and number of messages delivered in APP1
-total_sent = df4['Status'].count()
-print("total messages sent in APP1\t",total_sent)
-print("\n")
-num_delivered = (df4['Status'] == 'Delivered').sum()
-print("number of messages delivered in APP1\t",num_delivered)
-# messages is Delivered with in 60 seconds in APP1.
-msg_within60 = df4[(df4['Status']=='Delivered') & (df4['Diffrence Secs'] < 60)]
-count = msg_within60['Diffrence Secs'].count()
-print("number of messages in APP1 which sent with in 60 sec\t",count)
-print("\n")
-
-#total_sent = df5['Status'].count()
-#print("total messages sent",total_sent)
-num_delivered = (df5['Status'] == 'Delivered').sum()
-print("number of messages is Delivered with in 60 seconds in APP1\t",num_delivered)
-print("\n")
-
-# messages is Delivered with in 60 seconds in APP2.
-msg_within60 = df5[(df5['Status']=='Delivered') & (df5['Diffrence Secs'] < 60)]
-time =msg_within60['Diffrence Secs'].count()
-print("number of messages is Delivered with in 60 seconds in APP2\t", time)
-print("\n")
-
-# messages frequeancy sent by the diffrent provider.
-provider = msg_within60.groupby('Provider').size().sort_values(ascending=False)
-print("messages frequeancy sent by the diffrent provider in APP1\n\n",provider)
-
-# Number of late messages delivered in APP1 which is Delivered more than 120 seconds.
-late_messages = df4[df4['Diffrence Secs'] > 120]
-print("Number of late messages delivered in APP1 which is Delivered more than 120 seconds\t",late_messages['Diffrence Secs'].count())
-print("\n")
-print(f" The shortest delivered time of msg in APP1 in seconds is\t {df4['Diffrence Secs'].min()}")
-print("\n")
-print(f" The longest delivered time of msg in APP1 in seconds is\t {df4['Diffrence Secs'].max()}")
-
-# fetch the IP address column from the dataframe and extract information using ip address.
-# fetching IP address column from df2
-not_null_ip = df1.dropna(axis=0, subset=['IP Address'])
-#convert ip address column to list
+#fetching info. of client with the help of ip address-----------
+not_null_ip = merge_dff.dropna(axis=0, subset=['IP Address'])
 IP_list = not_null_ip["IP Address"].tolist()
-IP_list[0:10]
 
-# get the data using api
 ip = []
 city = []
 region = []
 country = []
 def get_location(ip_address):
+    
     response = requests.get(f'https://ipapi.co/{ip_address}/json/').json()
+    
     location_data = {
         "ip": ip_address,
         "city": response.get("city"),
         "region": response.get("region"),
-        "country": response.get("country_name")
+        "country": response.get("country")
     }
     return location_data
-
-#store information in list and then converted into dataframe.
-print("store information in list and then converted into dataframe")
-for i in range(0,5):
-    response = get_location(IP_list[i])
-    print(response)
     
+
+for i in range(0,25):
+    response = get_location(IP_list[i])
+    # print(response)
     ip.append(IP_list[i])
     city.append(response.get("city"))
     region.append(response.get("region"))
     country.append(response.get("country"))
     
-df13 = pd.DataFrame(list(zip(ip, city, region, country)),columns =["ip", "city", "region", "country"])
+    
+df8 = pd.DataFrame(list(zip(ip, city, region, country)),columns =["ip", "city", "region","country"])
+# print(df8)
 
-print(df13)
+
+# declare an empty list to store
+# latitude and longitude of values
+# of city column
+longitude = []
+latitude = []
+
+# function to find the coordinate
+# of a given city
+def findGeocode(city):
+	
+	# try and catch is used to overcome
+	# the exception thrown by geolocator
+	# using geocodertimedout
+	try:
+		
+		# Specify the user_agent as your
+		# app name it should not be none
+		geolocator = Nominatim(user_agent="your_app_name")
+		
+		return geolocator.geocode(city)
+	
+	except GeocoderTimedOut:
+		
+		return findGeocode(city)	
+
+# each value from city column
+# will be fetched and sent to
+# function find_geocode
+for i in (df8["city"]):
+	
+	if findGeocode(i) != None:
+		
+		loc = findGeocode(i)
+		
+		# coordinates returned from
+		# function is stored into
+		# two separate list
+		latitude.append(loc.latitude)
+		longitude.append(loc.longitude)
+	
+	# if coordinate for a city not
+	# found, insert "NaN" indicating
+	# missing value
+	else:
+		latitude.append(np.nan)
+		longitude.append(np.nan)
+
+# now add this column to dataframe
+df8["Longitude"] = longitude
+df8["Latitude"] = latitude
+  
+# print(df8)
+
+
+fig = make_subplots(
+    rows = 4, cols = 6,
+    specs=[
+            [{"type": "scattergeo", "rowspan": 4, "colspan": 3}, None, None, {"type": "indicator"}, {"type": "indicator"}, {"type": "indicator"} ],
+            [    None, None, None,               {"type": "bar", "colspan":3}, None, None],
+            [    None, None, None,              {"type": "bar", "colspan":3}, None, None],
+            [    None, None, None,               {"type": "bar", "colspan":3}, None, None],
+          ]
+)
+
+#Create annotation text--------------
+message = df8["country"] + "<br>"
+message += "City: " + df8["city"] + "<br>"
+message += "Region " + df8["region"] + "<br>"
+df8["text"] = message
+
+
+# Create subplot — Scattergeo map----------------
+fig.add_trace(
+    go.Scattergeo(
+        
+        locationmode = "country names",
+        lon = df8["Longitude"],
+        lat = df8["Latitude"],
+        hovertext = df8["text"],
+        showlegend=False,
+        marker = dict(
+            size = 10,
+            opacity = 0.8,
+            reversescale = True,
+            autocolorscale = True,
+            symbol = 'square',
+            line = dict(
+                width=1,
+                color='rgba(102, 102, 102)'
+            ),
+            cmin = 0,
+            # color = df8['city'],
+            # cmax = df8['region'],
+            colorbar_title="usercity<br>user region",  
+            colorbar_x = -0.05
+        )
+
+    ),
+    
+    row=1, col=1
+)
+
+#--------------------indicators-------------
+fig.add_trace(
+    go.Indicator(
+        mode="number",
+        value= Clicked,
+        title="Clicked",
+    ),
+    row=1, col=4
+)
+
+fig.add_trace(
+    go.Indicator(
+        mode="number",
+        value= Delivered,
+        title="Delivered",
+    ),
+    row=1, col=5
+)
+
+fig.add_trace(
+    go.Indicator(
+        mode="number",
+        value=Failed,
+        title="Failed",
+    ),
+    row=1, col=6
+)
+
+fig.add_trace(
+    go.Bar(
+        x=top10_Provider,
+        y=top10_freq, 
+        marker=dict(color="crimson"), 
+        name= "Provider and its frequency",
+
+        showlegend=True),
+    row=4, col=4
+)
+
+# ----------------------Finalize layout setting------------------
+fig.update_layout(
+    template="plotly_dark",
+    title = "SMS CAIMPAIGN REPORT",
+    showlegend=True,
+    legend_orientation="h",
+    legend=dict(x=0.65, y=0.8),
+    geo = dict(
+            projection_type="orthographic",
+            showcoastlines=True,
+            landcolor="white", 
+            showland= True,
+            showocean = True,
+            lakecolor="LightBlue"
+    ),
+    
+    annotations=[
+        dict(
+            
+            showarrow=False,
+            xref="paper",
+            yref="paper",
+            x=0.35,
+            y=0)
+    ]
+
+   
+)
+
+fig.write_html('first_figure.html', auto_open=True)
+
+
+
+
+
+
+
+

@@ -1,10 +1,5 @@
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
-import matplotlib
-matplotlib.use('Agg')
 import io
 import ast
 import requests
@@ -12,6 +7,7 @@ from datetime import datetime
 from flask import Flask, jsonify
 from flask import Flask, render_template
 from flask import*
+
 # import nltk
 import re
 # import string
@@ -21,6 +17,7 @@ import re
 # from nltk.tokenize import word_tokenize
 #--------------------data pre-processing------------------------#
 #dataset1
+  
 app = Flask(__name__)
 
 def dataset():
@@ -156,15 +153,9 @@ def dataset():
         
         
     df8 = pd.DataFrame(list(zip(ip, city, region, country)),columns =["ip", "city", "region","country"])
-    print("####################################333")
     print(df8)
    
-    
-   
-    
-    
-    
-    
+
     return d,pro,sta,df6,df7
     
 d,pro,sta,df6,df7 = dataset()
@@ -192,60 +183,11 @@ def insights():
 def provider_freq():
     return jsonify({"provider in camp1 and their freq":pro})
 
-
-print("###################################33")
 print(df6)
 print(df7)
-print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$44")
 @app.route('/status',methods =['GET'])
 def status():
     return jsonify({"status of messages in APP1":sta})
-
-#pie chart showing the message status
-
-@app.route('/matplot',methods=['GET','POST'])
-def mpl():
-    return render_template('matplot.html',PageTitle = 'Matplotlib')
-
-@app.route('/plot.png',methods =['GET'])
-def status_fig():
-    fig = create_figure()
-    output = io.BytesIO()
-    FigureCanvas(fig).print_png(output)
-    return Response(output.getvalue(), mimetype='image/png')
-
-def create_figure():
-    
-    # fig = df6.groupby(['Status']).sum().plot(kind='pie', y='No_of_msges', autopct='%1.0f%%')
-    STATUS = ['Delivered', ' No', 'Failed']
-    data = [6667,1667,1666]
-    # Creating plot
-    fig = plt.figure(figsize =(10, 5))
-    plt.pie(data, labels = STATUS)
-    return fig
-
-# #bar chart showing the provider and its frequency
-
-# @app.route('/matplot2',methods=['GET','POST'])
-# def mpl2():
-#     return render_template('matplot2.html',PageTitle = 'Matplotlib')
-
-# @app.route('/plot2.png',methods =['GET'])
-# def provider_freq():
-#     fig2 = create_figure2()
-#     output = io.BytesIO()
-#     FigureCanvas(fig2).print_png(output)
-#     return Response(output.getvalue(), mimetype='image/png')
-
-# def create_figure2():
-    
-#     fig2 = df7.plot(x = "Provider", y = "Frequency", kind = "bar")
-#     # plt.show()
-    
-  
-#     return fig2
-
-
 
 
 if __name__ == '__main__':
