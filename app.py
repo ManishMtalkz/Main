@@ -8,6 +8,9 @@ from datetime import datetime
 from flask import Flask, jsonify
 from flask import Flask, render_template
 from flask import*
+import logging
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 # import nltk
 import re
@@ -38,11 +41,7 @@ def dataset():
     
     #-----------------Rename column-------------------
     merge_dff.rename(columns = {'Location_y':'Click Location','Location_x':'Provider Location','Campaign name_x':'Campaign name','Count':'Clicks'}, inplace = True)
-    merge_dff.head()
-    #remove extra column---------------
     
-   
-
     # ---------------------dealing with null values-------------------
     merge_dff= merge_dff.fillna(value={'Provider Location':'unknown' , 'Provider':'unknown' , 'Browser':'unknown' , 'Platform':'unknown'   ,'Status':'No','Clicks':0,'Click Location':'unknown'})
     merge_dff.drop(['Campaign name_y'], inplace = True,axis = 1)
@@ -74,20 +73,11 @@ def dataset():
     #response rate-----------
     total_sent = int(merge_dff['Status'].count())
     sent = json.dumps( total_sent)
-    # print("total messages sent \n",total_sent)
     clicked_msg = int((merge_dff['Clicks'] > 0).sum())
     clicked = json.dumps(clicked_msg)
-    # print("number of messages clicked\t",clicked_msg)
     response_rate = (clicked_msg  / total_sent)*100
     d['response_rate']=response_rate
-    # d['Total Sent'] = sent
-    print(type(response_rate))
-    print(type(clicked_msg))
-    # total_sent = int(df.col1.sum())
-    # data = json.dumps(sum_col)
-    # d
-    # d['Total click']= clicked_msg
-    # d['Total sent']=  total_sent 
+   
     
 
     #  frequeancy of status of the messages
@@ -108,71 +98,77 @@ def dataset():
     df5.rename(columns =  {0:'Frequency'},inplace = True)
     i = df5.set_index('Provider')['Frequency'].to_json()
     pro = ast.literal_eval(i)
-    df7 =  merge_dff.groupby('Provider').size().sort_values(ascending=False).reset_index()
-    df7.rename(columns =  {0:'Frequency'},inplace = True)
+    
     
     # now calculating CTR--------------click through rate-------
     ctr = (clicked_msg/num_delivered)*100
     d['CTR']= ctr
-
-    
     
     #fetching the ip address column from the dataset anf find user's information------
+    df8 = merge_dff[['IP Address','Clicks']]
+    df9 = df8.dropna()
+    ip_list = df9["IP Address"].tolist()
+    top_100_ip = ip_list[1:101]
     
-    
-    not_null_ip = merge_dff.dropna(axis=0, subset=['IP Address'])
-    IP_list = not_null_ip["IP Address"].tolist()
-    
-    ip = []
-    city = []
-    region = []
-    country = []
-    def get_location(ip_address):
+    def convert_ip_to_location(ip_address=[], params=[]):
         
-        response = requests.get(f'https://ipapi.co/{ip_address}/json/').json()
-        
-        location_data = {
-            "ip": ip_address,
-            "city": response.get("city"),
-            "region": response.get("region"),
-            "country": response.get("country")
-        }
-        return location_data
-        
-    
-    for i in range(0,5):
-        response = get_location(IP_list[i])
-        # print(response)
-        ip.append(IP_list[i])
-        city.append(response.get("city"))
-        region.append(response.get("region"))
-        country.append(response.get("country"))
-        
-        
-    df8 = pd.DataFrame(list(zip(ip, city, region, country)),columns =["ip", "city", "region","country"])
-    
-        
-    combined_df = pd.concat([merge_dff, df8], axis=1, join='inner')
-    print(combined_df.head())
-    print(combined_df.columns)
-    combined_df.drop('IP Address', inplace=True, axis=1)  
-    # print(combined_df.columns) 
+        valid_params = ['status', 'message', 'continenet', 'continentCode', 'country',
+                        'countryCode', 'region', 'regionName', 'city', 'district', 
+                        'zip', 'lat', 'lon', 'timezone', 'offset', 'currency', 'isp',
+                        'org', 'as', 'asname', 'reverse', 'mobile', 'proxy', 'hosting',
+                        'query']
 
-    # print(df8)
-# function to find the coordinate
-# of a given city
+        assert isinstance(ip_address, list), 'The ip_address must be passed in a list'
+        assert ip_address, 'You must pass at least one ip address to the function'
+        assert isinstance(params, list), 'You must pass at least one parameter'
+        for param in params:
+            assert param in valid_params, f"{param} is not a valid parameter. List of valid params: {valid_params}"
 
+        url = 'http://ip-api.com/json/'
 
+        params = ['status', 'country', 'countryCode', 'city', 'timezone', 'mobile']
+        params_string = ','.join(params)
 
+        df10 = pd.DataFrame(columns=['ip_address'] + params)
 
-    return d,pro,sta,df6,df7
+        for ip in ip_address:
+            resp = requests.get(url + ip, params={'fields': params_string})
+            info = resp.json()
+            if info["status"] == 'success':
+                info = resp.json()
+                info.update({'ip_address': ip})
+                df10 = df10.append(info, ignore_index=True)
+            else:
+                logging.warning(f'Unsuccessful response for IP: {ip}')
+        
+        return df10
     
-d,pro,sta,df6,df7 = dataset()
+    
+    df10 = convert_ip_to_location(
+    ip_address = top_100_ip,
+    params=['status', 'country', 'countryCode', 'city', 'timezone', 'mobile']
+    )
+
+    print(df10)
+    
+     #best performing location------------
+     
+    df11 =  df10.groupby('city').size().sort_values(ascending=False).reset_index()
+    df11.rename(columns =  {0:'user_freq'},inplace = True)
+    print(df11)
+    l = df11.set_index('city')['user_freq'].to_json()
+    loc = ast.literal_eval(l)
+    
+    
+    return d,pro,sta,loc
+    
+d,pro,sta,loc = dataset()
 
 list = []
 list.append(d)
 list.append(pro)
 list.append(sta)
+list.append(loc)
 
 
 
@@ -192,15 +188,19 @@ def insights():
 def provider_freq():
     return jsonify({"provider in camp1 and their freq":pro})
 
-# print(df6)
-# print(df7)
+
 @app.route('/status',methods =['GET'])
 def status():
     return jsonify({"status of messages in APP1":sta})
 
 
+@app.route('/location',methods =['GET'])
+def location():
+    return jsonify({"best performed location":loc})
+
+
 if __name__ == '__main__':
-    app.run(debug = True)
+    app.run(debug = False,host = '0.0.0.0')
   
 
 
